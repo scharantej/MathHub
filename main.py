@@ -1,45 +1,38 @@
  
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+  return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
-def calculate():
-    operation = request.form.get('operation')
-    num1 = int(request.form.get('num1'))
-    num2 = int(request.form.get('num2'))
+@app.route('/problems')
+def problems():
+  return render_template('problems.html')
 
-    if operation == 'add':
-        result = num1 + num2
-    elif operation == 'subtract':
-        result = num1 - num2
-    elif operation == 'multiply':
-        result = num1 * num2
-    elif operation == 'divide':
-        result = num1 / num2
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+  if request.method == 'POST':
+    problem = request.form['problem']
+    answer = request.form['answer']
+    return render_template('solved.html', problem=problem, answer=answer)
+  else:
+    return render_template('submit.html')
 
-    return render_template('results.html', result=result)
+@app.route('/solved')
+def solved():
+  return render_template('solved.html')
 
-@app.route('/save', methods=['POST'])
-def save():
-    operation = request.form.get('operation')
-    num1 = int(request.form.get('num1'))
-    num2 = int(request.form.get('num2'))
-    result = int(request.form.get('result'))
-
-    # Save the calculation to the database.
-
-    return render_template('saved.html')
-
-@app.route('/saved')
-def saved():
-    # Get the saved calculations from the database.
-
-    return render_template('saved.html', calculations=calculations)
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+  if request.method == 'POST':
+    name = request.form['name']
+    email = request.form['email']
+    message = request.form['message']
+    return render_template('contact.html', name=name, email=email, message=message)
+  else:
+    return render_template('contact.html')
 
 if __name__ == '__main__':
-    app.run()
+  app.run(debug=True)
